@@ -59,11 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
           new Expanded(
             child: new Center(
                 child: new Container(
-                    width: 125.0, 
-                    height: 125.0, 
-                    child: RadialSeekBar()
-                )
-            ),
+                    width: 125.0, height: 125.0, child: RadialSeekBar())),
           ),
 
           //visualizer
@@ -81,6 +77,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+
+/////////////////////////////
+////Radial Seek Bar Widget////
+//////////////////////////////
 class RadialSeekBar extends StatefulWidget {
   final double trackWidth;
   final Color trackColor;
@@ -92,7 +92,7 @@ class RadialSeekBar extends StatefulWidget {
   final double thumbPosition;
   final Widget child;
 
-  RadialSeekBar({
+  RadialSeekBar({ 
     this.trackWidth = 3.0,
     this.trackColor = Colors.indigoAccent,
     this.progressWidth = 5.0,
@@ -111,7 +111,17 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
   @override
   Widget build(BuildContext context) {
     return new CustomPaint(
-      painter: new RadialSeekBarPainter(),
+      painter: new RadialSeekBarPainter(
+          progressColor: widget.progressColor,
+          progressPercentage: widget.progressPercentage, 
+          progressWidth: widget.progressWidth, 
+          thumbColor: widget.thumbColor, 
+          thumbPosition: widget.thumbPosition, 
+          thumbSize: widget.thumbSize, 
+          trackColor: widget.trackColor, 
+          trackWidth: widget.trackWidth,
+          
+      ),
       child: widget.child,
     );
   }
@@ -119,26 +129,41 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
 
 class RadialSeekBarPainter extends CustomPainter {
   final double trackWidth;
-  final Color trackColor;
+  
+  final Paint trackPaint;
   final double progressWidth;
-  final Color progressColor;
+  
   final double progressPercentage;
+  final Paint progressPaint;
   final double thumbSize;
-  final Color thumbColor;
+ 
   final double thumbPosition;
+  final Paint thumbPaint;
 
   RadialSeekBarPainter({
-    this.trackWidth = 3.0,
-    this.trackColor = Colors.indigoAccent,
-    this.progressWidth = 5.0,
-    this.progressColor = Colors.black87,
-    this.progressPercentage = 0.0,
-    this.thumbSize = 10.0,
-    this.thumbColor = Colors.black,
-    this.thumbPosition = 0.0,
-  });
-  @override
+    @required this.trackWidth,
+    @required trackColor,
+    @required this.progressWidth,
+    @required progressColor,
+    @required this.progressPercentage,
+    @required this.thumbSize,
+    @required thumbColor,
+    @required this.thumbPosition
+  })
+    : trackPaint = new Paint()
+        ..color = trackColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = trackWidth,
+      progressPaint = new Paint()
+        ..color = progressColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = progressWidth
+         ..strokeCap = StrokeCap.round,
+      thumbPaint = new Paint()
+        ..color = thumbColor
+        ..style = PaintingStyle.fill;
 
+  @override
   void paint(Canvas canvas, Size size) {
     //TODO: implement paint
   }
@@ -151,12 +176,12 @@ class RadialSeekBarPainter extends CustomPainter {
 }
 
 var albumArt = ClipOval(
-        clipper: new CircleClipper(),
-        child: new Image.network(
-          demoPlaylist.songs[0].albumArtUrl,
-          fit: BoxFit.cover,
-        ),
-      );
+  clipper: new CircleClipper(),
+  child: new Image.network(
+    demoPlaylist.songs[0].albumArtUrl,
+    fit: BoxFit.cover,
+  ),
+);
 
 class CircleClipper extends CustomClipper<Rect> {
   @override
