@@ -119,7 +119,7 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
   @override
   Widget build(BuildContext context) {
     return new CustomPaint(
-      painter: new RadialSeekBarPainter(
+      foregroundPainter: new RadialSeekBarPainter( //switch from painter to foregroundPainter
           progressColor: widget.progressColor,
           progressPercentage: widget.progressPercentage, 
           progressWidth: widget.progressWidth, 
