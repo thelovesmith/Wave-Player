@@ -58,8 +58,16 @@ class _MyHomePageState extends State<MyHomePage> {
           //Seek Bar Currrently just album artwork
           new Expanded(
             child: new Center(
-                child: new Container(
-                    width: 125.0, height: 125.0, child: RadialSeekBar())),
+              child: new Container(
+                width: 125.0, 
+                height: 125.0, 
+                child: RadialSeekBar( //shows song's playback progress/seek bar 
+                  progressPercentage: 0.3, //percentage of circle for progress bar 
+                  thumbPosition: 0.3,
+                  child: albumArt, //album artwork clip oval 
+                )
+              )
+            ),
           ),
 
           //visualizer
@@ -165,8 +173,48 @@ class RadialSeekBarPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    //TODO: implement paint
+    //this is the center point of the rectangular bounds we are cofined to when painting this seekbar 
+    final center = new Offset(size.width / 2, size.height / 2);
+    //radius of the circle we are painting. must be min value of whatever we are using 
+    final radius = min(size.height, size.width) / 2;
+    
+    ////paint the track//
+    /////
+    canvas.drawCircle(
+      center,
+      radius,
+      trackPaint,
+    );
+
+    ////paint progress/seek bar //
+    /////
+    final progressAngle = 2 * pi * progressPercentage;// math for progress angle
+    canvas.drawArc(
+      Rect.fromCircle(
+        center: center,
+        radius: radius,
+      ),// bounds // bounds are a square around the centre
+      -pi / 2, //top of the circle ,starting point
+      progressAngle, //sweep angle for progress indicator 
+      false, 
+      progressPaint, 
+    );
+    //// Paint thumb ///
+    /////
+    ////Finding  thumb position using angles around the circle
+    final thumbAngle = 2 * pi * thumbPosition - (pi / 2); //absolute angle of thumb position
+    final thumbX = cos(thumbAngle) * radius; //x coordinate of thumb 
+    final thumbY = sin(thumbAngle) * radius; //y coordinate of thumb 
+    final thumbCanter = new Offset(thumbX, thumbY) + center; //Thumb center is center of thumb which is offset from                                              actual circle center of the clip art
+    final thumbRadius = thumbSize / 2; // thumbSize is diameter, radius = D/2
+    canvas.drawCircle(
+      thumbCanter, 
+      thumbRadius, 
+      thumbPaint,
+    );
   }
+
+
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
