@@ -59,11 +59,12 @@ class _MyHomePageState extends State<MyHomePage> {
           new Expanded(
             child: new Center(
               child: new Container(
-                width: 125.0, 
-                height: 125.0, 
+                width: 150.0, 
+                height: 150.0,
+                color: Colors.greenAccent, 
                 child: RadialSeekBar( //shows song's playback progress/seek bar 
-                  progressPercentage: 0.3, //percentage of circle for progress bar 
-                  thumbPosition: 0.3,
+                  progressPercentage: 0.25, //percentage of circle for progress bar 
+                  thumbPosition: 0.25,
                   child: albumArt, //album artwork clip oval 
                 )
               )
@@ -116,6 +117,22 @@ class RadialSeekBar extends StatefulWidget {
 }
 
 class _RadialSeekBarState extends State<RadialSeekBar> {
+
+
+
+  EdgeInsets _insetsForPainter() {
+    // Make room for the painted track, progress, and thumb.  We divide by 2.0
+    // because we want to allow flush painting against the track, so we only
+    // need to account the thickness outside the track, not inside.
+    final outerThickness = max(
+      widget.trackWidth,
+      max(
+        widget.progressWidth,
+        widget.thumbSize
+      ),
+    ) / 2.0;
+    return new EdgeInsets.all(outerThickness);
+  }
   @override
   Widget build(BuildContext context) {
     return new CustomPaint(
@@ -130,7 +147,10 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
           trackWidth: widget.trackWidth,
           
       ),
-      child: widget.child,
+      child: new Padding( //padding to wrap arpund child widget
+        child: widget.child, 
+        padding: _insetsForPainter(),
+      ),
     );
   }
 }
@@ -173,10 +193,19 @@ class RadialSeekBarPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    //the thickest width to account for around the seekbar container, th eamount of space between the bounds of the container and the seek bar 
+    final outerThickness = max(trackWidth, max(progressWidth, thumbSize));
+    // New size to account for the outerThinkness 
+    Size constrainedSize = new Size(
+      size.width - outerThickness,
+      size.height - outerThickness,
+    );
+
     //this is the center point of the rectangular bounds we are cofined to when painting this seekbar 
     final center = new Offset(size.width / 2, size.height / 2);
     //radius of the circle we are painting. must be min value of whatever we are using 
-    final radius = min(size.height, size.width) / 2;
+    //added constrained height to accomadate for outerThickness
+    final radius = min(constrainedSize.height, constrainedSize.width) / 2;
     
     ////paint the track//
     /////
