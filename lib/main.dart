@@ -87,6 +87,11 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class RadialSeekBar extends StatefulWidget {
+  final double seekPercentage;
+  //ensures the seek bar takes a seekPercent
+  RadialSeekBar({
+    this.seekPercentage = 0.0, 
+  }); 
   @override
   _RadialSeekBarState createState() => _RadialSeekBarState();
 }
@@ -96,6 +101,24 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
   PolarCoord _startDragCoord; //hold onto start drag coord to calculate net drag change at any poin in time
   double _startDragPercentage;
   double _currentDragPercent; //Used to calculate seek perdentage during play
+
+
+  @override 
+  void initState(){
+    super.initState();
+    _seekPercentage = widget.seekPercentage;
+  }
+
+  //this fucntion lets the seekbar update without having to scroll
+  //so now we can scroll and also see the tracks progress at the same time. 
+  //two seperate modes 
+  @override
+  void didUpdateWidget(RadialSeekBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _seekPercentage = widget.seekPercentage;
+  }
+
+
 
   void _onDragStart(PolarCoord coord) {
     _startDragCoord = coord;
@@ -130,7 +153,7 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
       onRadialDragUpdate: _onDragUpdate,
       onRadialDragEnd: _onDragEnd,
       child: new Container(
-        color: Color(0xFF11FFFF),
+        color: purpleColor,
         width: double.infinity,
         height: double.infinity,
         child: new Center(
