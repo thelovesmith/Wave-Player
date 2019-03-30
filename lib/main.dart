@@ -5,6 +5,7 @@ import 'package:music_player/bottom_controls.dart';
 import 'package:music_player/songs.dart';
 import 'package:music_player/theme.dart';
 import 'package:fluttery/gestures.dart';
+import 'package:fluttery_audio/fluttery_audio.dart';
 
 void main() => runApp(MyApp());
 
@@ -38,50 +39,54 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: new IconButton(
-          icon: new Icon(
-            Icons.arrow_back_ios,
+    return new Audio(
+      audioUrl: demoPlaylist.songs[0].audioUrl,
+      // playbackState: PlaybackState.playing,
+          child: new Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          leading: new IconButton(
+            icon: new Icon(
+              Icons.arrow_back_ios,
+            ),
+            color: lightAccentColor,
+            onPressed: () {},
           ),
-          color: lightAccentColor,
-          onPressed: () {},
+          title: Title(
+            color: accentColor,
+            title: 'WAVE Audio Player',
+            child: Text('WAVE'),
+          ),
         ),
-        title: Title(
-          color: accentColor,
-          title: 'WAVE Audio Player',
-          child: Text('WAVE'),
-        ),
-      ),
-      body: new Column(
-        children: <Widget>[
-          //////////////////////////////
-          ////////// SEEK BAR ////////////
-          /////////////////////////////////
-          //To make seek bar draggable think about what type of things need to be done
-          //Touch range/sensitivity; where should th euser have to touch
-          //Probably want a big touch space and will have to make appropriate changes
-          //Seek Bar Currrently just album artwork// Seekbar currently with static progress bar and seekbar
-          //Adding the extra container inside the Expanded around the progressbar lets the progressbar remain modular after adding touch capablities
-          new Expanded(
-            child:
-                new RadialSeekBar(), //Stateful Radial Seekbar widget with gestures
-          ),
-          //////////////////////////////
-          ////////// VISUALIZER ////////////
-          /////////////////////////////////
-          new Container(
-            width: double.infinity,
-            height: 125.0,
-          ),
+        body: new Column(
+          children: <Widget>[
+            //////////////////////////////
+            ////////// SEEK BAR ////////////
+            /////////////////////////////////
+            //To make seek bar draggable think about what type of things need to be done
+            //Touch range/sensitivity; where should th euser have to touch
+            //Probably want a big touch space and will have to make appropriate changes
+            //Seek Bar Currrently just album artwork// Seekbar currently with static progress bar and seekbar
+            //Adding the extra container inside the Expanded around the progressbar lets the progressbar remain modular after adding touch capablities
+            new Expanded(
+              child:
+                  new RadialSeekBar(), //Stateful Radial Seekbar widget with gestures
+            ),
+            //////////////////////////////
+            ////////// VISUALIZER ////////////
+            /////////////////////////////////
+            new Container(
+              width: double.infinity,
+              height: 125.0,
+            ),
 
-          //////////////////////////////////////////
-          ////////// Bottom Controls and Song////////////
-          /////////////////////////////////////////////
-          new BottomControls(),
-        ],
+            //////////////////////////////////////////
+            ////////// Bottom Controls and Song////////////
+            /////////////////////////////////////////////
+            new BottomControls(),
+          ],
+        ),
       ),
     );
   }
