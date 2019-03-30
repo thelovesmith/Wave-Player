@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:music_player/bottom_controls.dart';
 import 'package:music_player/songs.dart';
 import 'package:music_player/theme.dart';
+import 'package:fluttery/gestures.dart';
 
 void main() => runApp(MyApp());
 
@@ -35,6 +36,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  double _seekPercentage = 0.25;
+  PolarCoord _startDragCoord; //hold onto start drag coord to calculate net drag change at any poin in time 
+  double _startDragPercentage;
+
+  void _onDragStart (PolarCoord coord) {
+
+  }
+  void _onDragUpdate (PolarCoord coord) {
+
+  }
+  void _onDragEnd () {
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -56,45 +72,57 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: new Column(
         children: <Widget>[
+          //////////////////////////////
+          ////////// SEEK BAR ////////////
+          /////////////////////////////////
           //To make seek bar draggable think about what type of things need to be done
           //Touch range/sensitivity; where should th euser have to touch 
           //Probably want a big touch space and will have to make appropriate changes 
           //Seek Bar Currrently just album artwork// Seekbar currently with static progress bar and seekbar
           //Adding the extra container inside the Expanded around the progressbar lets the progressbar remain modular after adding touch capablities 
           new Expanded(
-            child: Container( 
-              color: Color(0xFF11FFFF),
-              width: double.infinity,
-              height: double.infinity,
-              child: new Center(
-                child: new Container(
-                  
-                  width: 150.0, 
-                  height: 150.0,
-                   
-                  child: RadialProgressBar( //shows song's playback progress/seek bar 
-                    trackColor: Color(0xFFDDDDDD),
-                    progressPercentage: 0.25, //percentage of circle for progress bar 
-                    progressColor: accentColor,
-                    thumbPosition: 0.25,
-                    thumbColor: lightAccentColor,
-                    innerPadding: EdgeInsets.all(10.0),
+            child: new RadialDragGestureDetector(
+              //define these functions in state object to listen to changes 
+              onRadialDragStart: _onDragStart,
+              onRadialDragUpdate: _onDragUpdate,
+              onRadialDragEnd: _onDragEnd,
+                          child: new Container( 
+                color: Color(0xFF11FFFF),
+                width: double.infinity,
+                height: double.infinity,
+                child: new Center(
+                  child: new Container(
                     
-                    child: albumArt, //album artwork clip oval 
+                    width: 150.0, 
+                    height: 150.0,
+                     
+                    child: RadialProgressBar( //shows song's playback progress/seek bar 
+                      trackColor: Color(0xFFDDDDDD),
+                      progressPercentage: _seekPercentage, //percentage of circle for progress bar 
+                      progressColor: accentColor,
+                      thumbPosition: _seekPercentage,
+                      thumbColor: lightAccentColor,
+                      innerPadding: EdgeInsets.all(10.0),
+                      
+                      child: albumArt, //album artwork clip oval 
+                    )
                   )
-                )
+                ),
               ),
             ),
           ),
 
-          //visualizer
+          //////////////////////////////
+          ////////// VISUALIZER ////////////
+          /////////////////////////////////
           new Container(
             width: double.infinity,
             height: 125.0,
           ),
 
-          //Song title, artists name, player controls
-          //A column with rows
+          //////////////////////////////////////////
+          ////////// Bottom Controls and Song////////////
+          /////////////////////////////////////////////        
           new BottomControls(),
         ],
       ),
