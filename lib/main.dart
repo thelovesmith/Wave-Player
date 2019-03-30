@@ -65,6 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: RadialSeekBar( //shows song's playback progress/seek bar 
                   progressPercentage: 0.25, //percentage of circle for progress bar 
                   thumbPosition: 0.25,
+                  innerPadding: EdgeInsets.all(10.0),
+                  outerPaddding: EdgeInsets.all(10.0),
                   child: albumArt, //album artwork clip oval 
                 )
               )
@@ -99,17 +101,21 @@ class RadialSeekBar extends StatefulWidget {
   final double thumbSize;
   final Color thumbColor;
   final double thumbPosition;
+  final EdgeInsets outerPaddding; //padding around radialseekbar
+  final EdgeInsets innerPadding; //padding between radial seekbar and 
   final Widget child;
 
   RadialSeekBar({ 
     this.trackWidth = 3.0,
     this.trackColor = Colors.indigoAccent,
     this.progressWidth = 5.0,
-    this.progressColor = Colors.black87,
+    this.progressColor = Colors.deepOrangeAccent,
     this.progressPercentage = 0.0,
     this.thumbSize = 10.0,
-    this.thumbColor = Colors.black,
+    this.thumbColor = Colors.deepPurpleAccent,
     this.thumbPosition = 0.0,
+    this.outerPaddding = const EdgeInsets.all(0.0),
+    this.innerPadding = const EdgeInsets.all(0.0),
     this.child,
   });
   @override
@@ -135,21 +141,24 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
   }
   @override
   Widget build(BuildContext context) {
-    return new CustomPaint(
-      foregroundPainter: new RadialSeekBarPainter( //switch from painter to foregroundPainter
-          progressColor: widget.progressColor,
-          progressPercentage: widget.progressPercentage, 
-          progressWidth: widget.progressWidth, 
-          thumbColor: widget.thumbColor, 
-          thumbPosition: widget.thumbPosition, 
-          thumbSize: widget.thumbSize, 
-          trackColor: widget.trackColor, 
-          trackWidth: widget.trackWidth,
-          
-      ),
-      child: new Padding( //padding to wrap arpund child widget
-        child: widget.child, 
-        padding: _insetsForPainter(),
+    return new Padding(
+          padding: widget.outerPaddding,
+          child: new CustomPaint(
+        foregroundPainter: new RadialSeekBarPainter( //switch from painter to foregroundPainter
+            progressColor: widget.progressColor,
+            progressPercentage: widget.progressPercentage, 
+            progressWidth: widget.progressWidth, 
+            thumbColor: widget.thumbColor, 
+            thumbPosition: widget.thumbPosition, 
+            thumbSize: widget.thumbSize, 
+            trackColor: widget.trackColor, 
+            trackWidth: widget.trackWidth,
+            
+        ),
+        child: new Padding( //padding to wrap arpund child widget
+          child: widget.child, 
+          padding: _insetsForPainter() + widget.innerPadding,
+        ),
       ),
     );
   }
@@ -234,7 +243,7 @@ class RadialSeekBarPainter extends CustomPainter {
     final thumbAngle = 2 * pi * thumbPosition - (pi / 2); //absolute angle of thumb position
     final thumbX = cos(thumbAngle) * radius; //x coordinate of thumb 
     final thumbY = sin(thumbAngle) * radius; //y coordinate of thumb 
-    final thumbCanter = new Offset(thumbX, thumbY) + center; //Thumb center is center of thumb which is offset from                                              actual circle center of the clip art
+    final thumbCanter = new Offset(thumbX, thumbY) + center; //Thumb center is center of thumb which is offset from actual circle center of the clip art
     final thumbRadius = thumbSize / 2; // thumbSize is diameter, radius = D/2
     canvas.drawCircle(
       thumbCanter, 
