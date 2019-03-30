@@ -60,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
           //Touch range/sensitivity; where should th euser have to touch 
           //Probably want a big touch space and will have to make appropriate changes 
           //Seek Bar Currrently just album artwork// Seekbar currently with static progress bar and seekbar
+          //Adding the extra container inside the Expanded around the progressbar lets the progressbar remain modular after adding touch capablities 
           new Expanded(
             child: Container( 
               color: Color(0xFF11FFFF),
