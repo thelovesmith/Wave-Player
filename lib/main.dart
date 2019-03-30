@@ -56,24 +56,33 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: new Column(
         children: <Widget>[
-          //Seek Bar Currrently just album artwork
+          //To make seek bar draggable think about what type of things need to be done
+          //Touch range/sensitivity; where should th euser have to touch 
+          //Probably want a big touch space and will have to make appropriate changes 
+          //Seek Bar Currrently just album artwork// Seekbar currently with static progress bar and seekbar
           new Expanded(
-            child: new Center(
-              child: new Container(
-                width: 150.0, 
-                height: 150.0,
-                 
-                child: RadialProgressBar( //shows song's playback progress/seek bar 
-                  trackColor: Color(0xFFDDDDDD),
-                  progressPercentage: 0.25, //percentage of circle for progress bar 
-                  progressColor: accentColor,
-                  thumbPosition: 0.25,
-                  thumbColor: lightAccentColor,
-                  innerPadding: EdgeInsets.all(10.0),
+            child: Container( 
+              color: Color(0xFF11FFFF),
+              width: double.infinity,
+              height: double.infinity,
+              child: new Center(
+                child: new Container(
                   
-                  child: albumArt, //album artwork clip oval 
+                  width: 150.0, 
+                  height: 150.0,
+                   
+                  child: RadialProgressBar( //shows song's playback progress/seek bar 
+                    trackColor: Color(0xFFDDDDDD),
+                    progressPercentage: 0.25, //percentage of circle for progress bar 
+                    progressColor: accentColor,
+                    thumbPosition: 0.25,
+                    thumbColor: lightAccentColor,
+                    innerPadding: EdgeInsets.all(10.0),
+                    
+                    child: albumArt, //album artwork clip oval 
+                  )
                 )
-              )
+              ),
             ),
           ),
 
