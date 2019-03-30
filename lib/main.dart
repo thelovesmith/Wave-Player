@@ -66,7 +66,8 @@ class _MyHomePageState extends State<MyHomePage> {
           //Seek Bar Currrently just album artwork// Seekbar currently with static progress bar and seekbar
           //Adding the extra container inside the Expanded around the progressbar lets the progressbar remain modular after adding touch capablities
           new Expanded(
-            child: new RadialSeekBar(), //Stateful Radial Seekbar widget with gestures
+            child:
+                new RadialSeekBar(), //Stateful Radial Seekbar widget with gestures
           ),
           //////////////////////////////
           ////////// VISUALIZER ////////////
@@ -90,35 +91,34 @@ class RadialSeekBar extends StatefulWidget {
   final double seekPercentage;
   //ensures the seek bar takes a seekPercent
   RadialSeekBar({
-    this.seekPercentage = 0.0, 
-  }); 
+    this.seekPercentage = 0.0,
+  });
   @override
   _RadialSeekBarState createState() => _RadialSeekBarState();
 }
 
 class _RadialSeekBarState extends State<RadialSeekBar> {
-  double _seekPercentage = 0.0; // this must change based on start position and song duration
-  PolarCoord _startDragCoord; //hold onto start drag coord to calculate net drag change at any poin in time
+  double _seekPercentage =
+      0.0; // this must change based on start position and song duration
+  PolarCoord
+      _startDragCoord; //hold onto start drag coord to calculate net drag change at any poin in time
   double _startDragPercentage;
   double _currentDragPercent; //Used to calculate seek perdentage during play
 
-
-  @override 
-  void initState(){
+  @override
+  void initState() {
     super.initState();
     _seekPercentage = widget.seekPercentage;
   }
 
   //this fucntion lets the seekbar update without having to scroll
-  //so now we can scroll and also see the tracks progress at the same time. 
-  //two seperate modes 
+  //so now we can scroll and also see the tracks progress at the same time.
+  //two seperate modes
   @override
   void didUpdateWidget(RadialSeekBar oldWidget) {
     super.didUpdateWidget(oldWidget);
     _seekPercentage = widget.seekPercentage;
   }
-
-
 
   void _onDragStart(PolarCoord coord) {
     _startDragCoord = coord;
@@ -130,9 +130,9 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
     final dragPercent = dragAngle / (2 * pi);
     setState(() => {
           //updating dragPercent using start drag coord
-      _currentDragPercent = (_startDragPercentage + dragPercent) % 1.0 
+          _currentDragPercent = (_startDragPercentage + dragPercent) % 1.0
           //keep it equal and lower than 100percent
-    });
+        });
   }
 
   void _onDragEnd() {
@@ -163,7 +163,7 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
                 child: RadialProgressBar(
                   //shows song's playback progress/seek bar
                   trackColor: Color(0xFFDDDDDD),
-                  progressPercentage: _currentDragPercent ?? _seekPercentage, 
+                  progressPercentage: _currentDragPercent ?? _seekPercentage,
                   //percentage of circle for progress bar; uses current drag percent if its neither null nor zero
                   progressColor: accentColor,
                   thumbPosition: _currentDragPercent ?? _seekPercentage,
@@ -343,7 +343,6 @@ class RadialProgressBarPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    // TODO: implement shouldRepaint
     return true;
   }
 }
