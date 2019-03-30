@@ -94,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 /////////////////////////////
-////Radial Seek Bar Widget////
+////Radial Seek Bar Widget >>>> RadialProgressBar////
 //////////////////////////////
 class RadialProgressBar extends StatefulWidget {
   final double trackWidth;
