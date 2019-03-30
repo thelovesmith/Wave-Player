@@ -37,18 +37,31 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  double _seekPercentage = 0.25;
+  double _seekPercentage = 0.55; // this must change based on start position and song duration
   PolarCoord _startDragCoord; //hold onto start drag coord to calculate net drag change at any poin in time 
   double _startDragPercentage;
+  double _currentDragPercent; //Used to calculate seek perdentage during play 
 
+  
   void _onDragStart (PolarCoord coord) {
-
+    _startDragCoord = coord;
+    _startDragPercentage = _seekPercentage;
   }
-  void _onDragUpdate (PolarCoord coord) {
 
+  void _onDragUpdate (PolarCoord coord) {
+    final dragAngle = coord.angle - _startDragCoord.angle;
+    final dragPercent = dragAngle / (2 * pi);
+    setState(() => { //updating dragPercent using startdragcoord 
+      _currentDragPercent = (_startDragPercentage + dragPercent) % 1.0 //keep it equal and lower than 100percent
+    });
   }
   void _onDragEnd () {
-
+    setState(() {
+      _seekPercentage = _currentDragPercent;
+      _currentDragPercent = null;
+      _startDragCoord = null;
+      _startDragPercentage = 0.0;
+    });
   }
 
   @override
@@ -98,9 +111,9 @@ class _MyHomePageState extends State<MyHomePage> {
                      
                     child: RadialProgressBar( //shows song's playback progress/seek bar 
                       trackColor: Color(0xFFDDDDDD),
-                      progressPercentage: _seekPercentage, //percentage of circle for progress bar 
+                      progressPercentage: _currentDragPercent ?? _seekPercentage, //percentage of circle for progress bar; uses current drag percent if its neither null nor zero
                       progressColor: accentColor,
-                      thumbPosition: _seekPercentage,
+                      thumbPosition: _currentDragPercent ?? _seekPercentage,
                       thumbColor: lightAccentColor,
                       innerPadding: EdgeInsets.all(10.0),
                       
