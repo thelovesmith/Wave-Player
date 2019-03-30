@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:music_player/bottom_controls.dart';
 import 'package:music_player/songs.dart';
+import 'package:music_player/theme.dart';
 
 void main() => runApp(MyApp());
 
@@ -44,11 +45,11 @@ class _MyHomePageState extends State<MyHomePage> {
           icon: new Icon(
             Icons.arrow_back_ios,
           ),
-          color: Colors.deepPurpleAccent,
+          color: lightAccentColor,
           onPressed: () {},
         ),
         title: Title(
-          color: Colors.deepPurpleAccent,
+          color: accentColor,
           title: 'WAVE Audio Player',
           child: Text('WAVE'),
         ),
@@ -61,12 +62,15 @@ class _MyHomePageState extends State<MyHomePage> {
               child: new Container(
                 width: 150.0, 
                 height: 150.0,
-                color: Colors.greenAccent, 
-                child: RadialSeekBar( //shows song's playback progress/seek bar 
+                 
+                child: RadialProgressBar( //shows song's playback progress/seek bar 
+                  trackColor: Color(0xFFDDDDDD),
                   progressPercentage: 0.25, //percentage of circle for progress bar 
+                  progressColor: accentColor,
                   thumbPosition: 0.25,
+                  thumbColor: lightAccentColor,
                   innerPadding: EdgeInsets.all(10.0),
-                  outerPaddding: EdgeInsets.all(10.0),
+                  
                   child: albumArt, //album artwork clip oval 
                 )
               )
@@ -92,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
 /////////////////////////////
 ////Radial Seek Bar Widget////
 //////////////////////////////
-class RadialSeekBar extends StatefulWidget {
+class RadialProgressBar extends StatefulWidget {
   final double trackWidth;
   final Color trackColor;
   final double progressWidth;
@@ -101,11 +105,11 @@ class RadialSeekBar extends StatefulWidget {
   final double thumbSize;
   final Color thumbColor;
   final double thumbPosition;
-  final EdgeInsets outerPaddding; //padding around radialseekbar
+  final EdgeInsets outerPaddding; //padding around RadialProgressBar
   final EdgeInsets innerPadding; //padding between radial seekbar and 
   final Widget child;
 
-  RadialSeekBar({ 
+  RadialProgressBar({ 
     this.trackWidth = 3.0,
     this.trackColor = Colors.indigoAccent,
     this.progressWidth = 5.0,
@@ -119,10 +123,10 @@ class RadialSeekBar extends StatefulWidget {
     this.child,
   });
   @override
-  _RadialSeekBarState createState() => new _RadialSeekBarState();
+  _RadialProgressBarState createState() => new _RadialProgressBarState();
 }
 
-class _RadialSeekBarState extends State<RadialSeekBar> {
+class _RadialProgressBarState extends State<RadialProgressBar> {
 
 
 
@@ -144,7 +148,7 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
     return new Padding(
           padding: widget.outerPaddding,
           child: new CustomPaint(
-        foregroundPainter: new RadialSeekBarPainter( //switch from painter to foregroundPainter
+        foregroundPainter: new RadialProgressBarPainter( //switch from painter to foregroundPainter
             progressColor: widget.progressColor,
             progressPercentage: widget.progressPercentage, 
             progressWidth: widget.progressWidth, 
@@ -164,7 +168,7 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
   }
 }
 
-class RadialSeekBarPainter extends CustomPainter {
+class RadialProgressBarPainter extends CustomPainter {
   final double trackWidth;
   
   final Paint trackPaint;
@@ -177,7 +181,7 @@ class RadialSeekBarPainter extends CustomPainter {
   final double thumbPosition;
   final Paint thumbPaint;
 
-  RadialSeekBarPainter({
+  RadialProgressBarPainter({
     @required this.trackWidth,
     @required trackColor,
     @required this.progressWidth,
