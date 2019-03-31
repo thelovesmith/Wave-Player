@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return new Audio(
       audioUrl: demoPlaylist.songs[0].audioUrl,
-      // playbackState: PlaybackState.playing,
+      playbackState: PlaybackState.paused,
           child: new Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -103,10 +103,8 @@ class RadialSeekBar extends StatefulWidget {
 }
 
 class _RadialSeekBarState extends State<RadialSeekBar> {
-  double _seekPercentage =
-      0.0; // this must change based on start position and song duration
-  PolarCoord
-      _startDragCoord; //hold onto start drag coord to calculate net drag change at any poin in time
+  double _seekPercentage = 0.0; // this must change based on start position and song duration
+  PolarCoord _startDragCoord; //hold onto start drag coord to calculate net drag change at any poin in time
   double _startDragPercentage;
   double _currentDragPercent; //Used to calculate seek perdentage during play
 
@@ -133,11 +131,11 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
   void _onDragUpdate(PolarCoord coord) {
     final dragAngle = coord.angle - _startDragCoord.angle;
     final dragPercent = dragAngle / (2 * pi);
-    setState(() => {
+    setState(() => 
           //updating dragPercent using start drag coord
-          _currentDragPercent = (_startDragPercentage + dragPercent) % 1.0
+          _currentDragPercent = (_startDragPercentage + dragPercent) % 1.0,
           //keep it equal and lower than 100percent
-        });
+        );
   }
 
   void _onDragEnd() {
