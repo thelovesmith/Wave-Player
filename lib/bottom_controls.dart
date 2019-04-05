@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttery_audio/fluttery_audio.dart';
 import 'package:music_player/theme.dart';
 
 class BottomControls extends StatelessWidget {
@@ -47,7 +48,7 @@ class BottomControls extends StatelessWidget {
                     ////////////////////////////////
                     ///// PLAY SONG BUTTON ////////
                     ////////////////////////////////
-                    new PlayButton(),
+                    new PlayPauseButton(),
                     //Space
                     new Expanded(
                       child: new Container(),////////empty container
@@ -134,31 +135,52 @@ class PreviousButton extends StatelessWidget {
   }
 }
 
-class PlayButton extends StatelessWidget {
-  const PlayButton({
+class PlayPauseButton extends StatelessWidget {
+  const PlayPauseButton({
     Key key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return new RawMaterialButton(
-      shape: new CircleBorder(),
-      fillColor: Colors.white,
-      splashColor: accentColor,
-      highlightColor: Colors.lightGreen.withOpacity(0.5),
-      elevation: 10.0,
-      highlightElevation: 5.0,
-      onPressed: () {
-        //TODO: //////
-      },
-      child: new Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: new Icon(
-          Icons.play_arrow,
-          color: darkAccentColor,
-          size: 35.0,
-        )
-      ),
+    return AudioComponent( //looks for audio widget and lets you control the state of the audio wigdet
+      updateMe: [
+        WatchableAudioProperties.audioPlayerState,
+      ],
+      playerBuilder: (BuildContext context, AudioPlayer player, Widget child) {
+
+        IconData icon = Icons.music_note;
+        Function onPressed;
+        Color buttonColor = lightAccentColor;
+        //theses if statements changes play/pause button based on state of audio player
+        if (player.state == AudioPlayerState.playing) {
+          icon = Icons.pause;
+          onPressed = player.pause;
+          buttonColor = Colors.white;
+        } else if (player.state == AudioPlayerState.paused || player.state == AudioPlayerState.completed) {
+          icon = Icons.play_arrow;
+          onPressed = player.play;
+          buttonColor = Colors.white;
+        }
+
+        return new RawMaterialButton(
+        shape: new CircleBorder(),
+        fillColor: buttonColor,
+        splashColor: accentColor,
+        highlightColor: Colors.lightGreen.withOpacity(0.5),
+        elevation: 10.0,
+        highlightElevation: 5.0,
+        onPressed: onPressed,
+        child: new Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: new Icon(
+            icon,
+            color: darkAccentColor,
+            size: 35.0,
+          )
+        ),
+      );
+      }, 
+         
     );
   }
 }

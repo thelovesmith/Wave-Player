@@ -39,7 +39,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return new Audio(
+    return new Audio(// this audio widget needs to be one of the top widgets so that it is playing everywhere, you dont want it to stop playing when they switch to a different page 
       audioUrl: demoPlaylist.songs[0].audioUrl,
       playbackState: PlaybackState.paused,
           child: new Scaffold(
