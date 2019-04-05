@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 import 'package:music_player/bottom_controls.dart';
 import 'package:music_player/songs.dart';
@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return new Audio(// this audio widget needs to be one of the top widgets so that it is playing everywhere, you dont want it to stop playing when they switch to a different page 
-      audioUrl: demoPlaylist.songs[0].audioUrl,
+      audioUrl: demoPlaylist.songs[1].audioUrl,
       playbackState: PlaybackState.paused,
           child: new Scaffold(
         appBar: AppBar(
