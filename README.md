@@ -4,4 +4,5 @@
 ## Sections
     + Static UI
     + Seekbar Painting 
+    + Audio Playback and Seeking functionality 
 
