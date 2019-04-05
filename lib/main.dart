@@ -71,7 +71,23 @@ class _MyHomePageState extends State<MyHomePage> {
             //Adding the extra container inside the Expanded around the progressbar lets the progressbar remain modular after adding touch capablities
             new Expanded(
               child:
-                  new RadialSeekBar(), //Stateful Radial Seekbar widget with gestures
+                new AudioComponent(
+                  updateMe: [
+                    WatchableAudioProperties.audioPlayhead,
+                    WatchableAudioProperties.audioSeeking,
+                  ],
+                  playerBuilder: (BuildContext context, AudioPlayer player, Widget child) {
+                    //these if statements help you conrol the seeking capabilities and look for the track duration is there is one. 
+                    double playbackProgress = 0.0; 
+
+                    if (player.audioLength != null && player.position != null) {
+                      playbackProgress = player.position.inMilliseconds / player.audioLength.inMilliseconds;
+                    }
+                    return new RadialSeekBar(
+                      seekPercentage: playbackProgress,
+                    );
+                  },
+                ), //Stateful Radial Seekbar widget with gestures
             ),
             //////////////////////////////
             ////////// VISUALIZER ////////////
@@ -93,17 +109,23 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class RadialSeekBar extends StatefulWidget {
-  final double seekPercentage;
+  final double seekPercentage; //seek position
+  final double progress; //playback progress 
+  final Function (double) seekRequest;
   //ensures the seek bar takes a seekPercent
   RadialSeekBar({
     this.seekPercentage = 0.0,
+    this.progress = 0.0, 
+    this.seekRequest,
+    
   });
   @override
   _RadialSeekBarState createState() => _RadialSeekBarState();
 }
 
+
 class _RadialSeekBarState extends State<RadialSeekBar> {
-  double _seekPercentage = 0.0; // this must change based on start position and song duration
+  double _progress = 0.0; // this must change based on start position and song duration
   PolarCoord _startDragCoord; //hold onto start drag coord to calculate net drag change at any poin in time
   double _startDragPercentage;
   double _currentDragPercent; //Used to calculate seek perdentage during play
@@ -111,7 +133,7 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
   @override
   void initState() {
     super.initState();
-    _seekPercentage = widget.seekPercentage;
+    _progress = widget.progress;
   }
 
   //this fucntion lets the seekbar update without having to scroll
@@ -120,12 +142,12 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
   @override
   void didUpdateWidget(RadialSeekBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _seekPercentage = widget.seekPercentage;
+    _progress = widget.progress;
   }
 
   void _onDragStart(PolarCoord coord) {
     _startDragCoord = coord;
-    _startDragPercentage = _seekPercentage;
+    _startDragPercentage = _progress;
   }
 
   void _onDragUpdate(PolarCoord coord) {
@@ -139,8 +161,11 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
   }
 
   void _onDragEnd() {
+    if (widget.seekRequest != null){ //if user drags(request) then change seekbar position
+      widget.seekRequest(_currentDragPercent);
+    }
     setState(() {
-      _seekPercentage = _currentDragPercent;
+      
       _currentDragPercent = null;
       _startDragCoord = null;
       _startDragPercentage = 0.0;
@@ -149,6 +174,7 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
 
   @override
   Widget build(BuildContext context) {
+    
     return new RadialDragGestureDetector(
       //define these functions in state object to listen to changes//
       //functions for radial gesture detector
@@ -166,10 +192,10 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
                 child: RadialProgressBar(
                   //shows song's playback progress/seek bar
                   trackColor: Color(0xFFDDDDDD),
-                  progressPercentage: _currentDragPercent ?? _seekPercentage,
+                  progressPercentage: _currentDragPercent ?? _progress,
                   //percentage of circle for progress bar; uses current drag percent if its neither null nor zero
                   progressColor: accentColor,
-                  thumbPosition: _currentDragPercent ?? _seekPercentage,
+                  thumbPosition: _currentDragPercent ?? _progress,
                   thumbColor: lightAccentColor,
                   innerPadding: EdgeInsets.all(10.0),
                   child: albumArt, //album artwork clip oval
