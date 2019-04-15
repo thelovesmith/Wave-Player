@@ -16,12 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'music_player',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        // This is the theme of your application.
-        primaryColorLight: Colors.green,
-        primarySwatch: Colors.yellow,
-        accentColor: Colors.green,
-      ),
+      theme: ThemeData.dark(),
       home: MyHomePage(title: 'Wave Audio Player'),
     );
   }
@@ -78,7 +73,14 @@ class _MyHomePageState extends State<MyHomePage> {
             new Expanded(
               //these if statements help you conrol the seeking capabilities and look for the track duration is there is one.
 
-              child: new AudioRadialSeekBar(),
+              child: AudioPlaylistComponent(
+                playlistBuilder: (BuildContext context, Playlist playlist, Widget child){
+                  String albumArtUrl = demoPlaylist.songs[playlist.activeIndex].albumArtUrl;
+                  return new AudioRadialSeekBar(
+                    albumArtUrl: albumArtUrl,
+                  );
+                },
+              ),
 
               //Stateful Radial Seekbar widget with gestures
             ),
@@ -100,9 +102,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
+////////////////////////////////////////////
+////////// Audio Radial Seek  Bar///////////
+////////////////////////////////////////////
 class AudioRadialSeekBar extends StatefulWidget {
- 
+  final String albumArtUrl;
+
+  const AudioRadialSeekBar({Key key, this.albumArtUrl}) : super(key: key);
 
   @override
   _AudioRadialSeekBarState createState() => _AudioRadialSeekBarState();
@@ -131,25 +137,38 @@ class _AudioRadialSeekBarState extends State<AudioRadialSeekBar> {
         onSeekRequested: (double seekPercentage) {
           setState(() {
             _seekPercentage = seekPercentage;
+          });
             final seekMillis = (player.audioLength.inMilliseconds * seekPercentage).round();
             player.seek(Duration(milliseconds: seekMillis));
-          });
         },
+        child: new Container(
+          color: accentColor,
+          child: new Image.network(
+            widget.albumArtUrl,
+            fit: BoxFit.contain,
+          ),
+        ),
       );
       },
     );
   }
 }
 
+ /////////////////////////////////////
+ ////////// Radial Seek Bar///////////
+//////////////////////////////////////
+
 class RadialSeekBar extends StatefulWidget {
   final double seekPercentage; //seek position
   final double progress; //playback progress
   final Function(double) onSeekRequested;
   //ensures the seek bar takes a seekPercent
+  final Widget child; //child for album artowork 
   RadialSeekBar({
     this.seekPercentage = 0.0,
     this.progress = 0.0,
-    this.onSeekRequested,
+    this.onSeekRequested, 
+    this.child,
   });
   @override
   _RadialSeekBarState createState() => _RadialSeekBarState();
@@ -238,7 +257,10 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
                   thumbPosition: thumbPosition,
                   thumbColor: lightAccentColor,
                   innerPadding: EdgeInsets.all(10.0),
-                  child: albumArt, //album artwork clip oval
+                  child: new ClipOval(
+                    clipper: new CircleClipper(),
+                    child: widget.child,
+                  ), //album artwork clip oval
                 ))),
       ),
     );
@@ -416,13 +438,6 @@ class RadialProgressBarPainter extends CustomPainter {
   }
 }
 
-var albumArt = ClipOval(
-  clipper: new CircleClipper(),
-  child: new Image.network(
-    demoPlaylist.songs[1].albumArtUrl,
-    fit: BoxFit.cover,
-  ),
-);
 
 class CircleClipper extends CustomClipper<Rect> {
   @override
