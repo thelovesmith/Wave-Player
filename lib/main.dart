@@ -175,10 +175,10 @@ class RadialSeekBar extends StatefulWidget {
 }
 
 class _RadialSeekBarState extends State<RadialSeekBar> {
-  double _progress =
-      0.0; // this must change based on start position and song duration
-  PolarCoord
-      _startDragCoord; //hold onto start drag coord to calculate net drag change at any poin in time
+  double _progress = 0.0; 
+// this must change based on start position and song duration
+  PolarCoord _startDragCoord; 
+//hold onto start drag coord to calculate net drag change at any poin in time
   double _startDragPercent;
   double _currentDragPercent; //Used to calculate seek perdentage during play
 
@@ -234,6 +234,7 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
     } else if (widget.seekPercentage != null) {
       thumbPosition = widget.seekPercentage;
     }
+
     return new RadialDragGestureDetector(
       //define these functions in state object to listen to changes//
       //functions for radial gesture detector
@@ -363,8 +364,8 @@ class RadialProgressBarPainter extends CustomPainter {
       @required this.progressPercentage,
       @required this.thumbSize,
       @required thumbColor,
-      @required this.thumbPosition})
-      : trackPaint = new Paint()
+      @required this.thumbPosition
+    }) : trackPaint = new Paint()
           ..color = trackColor
           ..style = PaintingStyle.stroke
           ..strokeWidth = trackWidth,
@@ -391,7 +392,7 @@ class RadialProgressBarPainter extends CustomPainter {
     final center = new Offset(size.width / 2, size.height / 2);
     //radius of the circle we are painting. must be min value of whatever we are using
     //added constrained height to accomadate for outerThickness
-    final radius = min(constrainedSize.height, constrainedSize.width) / 2;
+    final radius = min(constrainedSize.width, constrainedSize.height) / 2;
 
     ////paint the track//
     /////
@@ -406,7 +407,7 @@ class RadialProgressBarPainter extends CustomPainter {
     final progressAngle =
         2 * pi * progressPercentage; // math for progress angle
     canvas.drawArc(
-      Rect.fromCircle(
+      new Rect.fromCircle(
         center: center,
         radius: radius,
       ), // bounds // bounds are a square around the centre
@@ -422,11 +423,11 @@ class RadialProgressBarPainter extends CustomPainter {
         2 * pi * thumbPosition - (pi / 2); //absolute angle of thumb position
     final thumbX = cos(thumbAngle) * radius; //x coordinate of thumb
     final thumbY = sin(thumbAngle) * radius; //y coordinate of thumb
-    final thumbCanter = new Offset(thumbX, thumbY) +
-        center; //Thumb center is center of thumb which is offset from actual circle center of the clip art
-    final thumbRadius = thumbSize / 2; // thumbSize is diameter, radius = D/2
+    final thumbCenter = new Offset(thumbX, thumbY) + center; 
+//Thumb center is center of thumb which is offset from actual circle center of the clip art
+    final thumbRadius = thumbSize / 2.0; // thumbSize is diameter, radius = D/2
     canvas.drawCircle(
-      thumbCanter,
+      thumbCenter,
       thumbRadius,
       thumbPaint,
     );
