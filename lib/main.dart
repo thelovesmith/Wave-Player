@@ -14,10 +14,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'music_player',
+      title: 'Wave Player',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: MyHomePage(title: 'Wave Audio Player'),
+      home: new MyHomePage(),
     );
   }
 }
