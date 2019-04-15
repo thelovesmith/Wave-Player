@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttery_audio/fluttery_audio.dart';
+import 'package:fluttery_audio/fluttery_audio.dart' show AudioComponent, AudioPlayer, AudioPlayerState, AudioPlaylistComponent, Playlist, WatchableAudioProperties;
 import 'package:music_player/songs.dart';
 import 'package:music_player/theme.dart';
 
@@ -87,7 +87,7 @@ class TrackInfo extends StatelessWidget {
 
           //Artist Name
           new TextSpan(
-              text: '${artistName.toUpperCase()}',
+              text: '${artistName.toUpperCase()}\n',
               style: new TextStyle(
                 color: Colors.white.withOpacity(0.75),
                 fontSize: 12.0,

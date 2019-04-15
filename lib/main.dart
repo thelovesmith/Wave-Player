@@ -5,7 +5,7 @@ import 'package:music_player/bottom_controls.dart';
 import 'package:music_player/songs.dart';
 import 'package:music_player/theme.dart';
 import 'package:fluttery/gestures.dart';
-import 'package:fluttery_audio/fluttery_audio.dart';
+import 'package:fluttery_audio/fluttery_audio.dart' show AudioComponent, AudioPlayer, AudioPlaylist, AudioPlaylistComponent, PlaybackState, Playlist, WatchableAudioProperties;
 
 void main() => runApp(MyApp());
 
