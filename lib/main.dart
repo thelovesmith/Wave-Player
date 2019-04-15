@@ -37,12 +37,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  
   @override
   Widget build(BuildContext context) {
-    return new Audio(// this audio widget needs to be one of the top widgets so that it is playing everywhere, you dont want it to stop playing when they switch to a different page 
+    return new Audio(
+      // this audio widget needs to be one of the top widgets so that it is playing everywhere, you dont want it to stop playing when they switch to a different page
       audioUrl: demoPlaylist.songs[1].audioUrl,
       playbackState: PlaybackState.paused,
-          child: new Scaffold(
+      child: new Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
@@ -70,24 +72,11 @@ class _MyHomePageState extends State<MyHomePage> {
             //Seek Bar Currrently just album artwork// Seekbar currently with static progress bar and seekbar
             //Adding the extra container inside the Expanded around the progressbar lets the progressbar remain modular after adding touch capablities
             new Expanded(
-              child:
-                new AudioComponent(
-                  updateMe: [
-                    WatchableAudioProperties.audioPlayhead,
-                    WatchableAudioProperties.audioSeeking,
-                  ],
-                  playerBuilder: (BuildContext context, AudioPlayer player, Widget child) {
-                    //these if statements help you conrol the seeking capabilities and look for the track duration is there is one. 
-                    double playbackProgress = 0.0; 
+              //these if statements help you conrol the seeking capabilities and look for the track duration is there is one.
 
-                    if (player.audioLength != null && player.position != null) {
-                      playbackProgress = player.position.inMilliseconds / player.audioLength.inMilliseconds;
-                    }
-                    return new RadialSeekBar(
-                      seekPercentage: playbackProgress,
-                    );
-                  },
-                ), //Stateful Radial Seekbar widget with gestures
+              child: new AudioRadialSeekBar(),
+
+              //Stateful Radial Seekbar widget with gestures
             ),
             //////////////////////////////
             ////////// VISUALIZER ////////////
@@ -108,26 +97,66 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+class AudioRadialSeekBar extends StatefulWidget {
+ 
+
+  @override
+  _AudioRadialSeekBarState createState() => _AudioRadialSeekBarState();
+}
+
+class _AudioRadialSeekBarState extends State<AudioRadialSeekBar> {
+  double _seekPercentage;
+  @override
+  Widget build(BuildContext context) {
+    return new AudioComponent(
+      updateMe: [
+        WatchableAudioProperties.audioPlayhead,
+        WatchableAudioProperties.audioSeeking,
+      ],
+      playerBuilder: (BuildContext context, AudioPlayer player, Widget child){
+        double playbackProgress = 0.0;
+        
+        if (player.audioLength != null && player.position != null) {
+          playbackProgress = player.position.inMilliseconds / player.audioLength.inMilliseconds;
+        }
+        // is the player seeking or not, it its not seeking then the thumb will return bck to its proper placement which is playbcack progress 
+        _seekPercentage = player.isSeeking ? _seekPercentage : null; 
+      return new RadialSeekBar(
+        progress: playbackProgress,
+        seekPercentage: _seekPercentage,
+        onSeekRequested: (double seekPercentage) {
+          setState(() {
+            _seekPercentage = seekPercentage;
+            final seekMillis = (player.audioLength.inMilliseconds * seekPercentage).round();
+            player.seek(Duration(milliseconds: seekMillis));
+          });
+        },
+      );
+      },
+    );
+  }
+}
+
 class RadialSeekBar extends StatefulWidget {
   final double seekPercentage; //seek position
-  final double progress; //playback progress 
-  final Function (double) seekRequest;
+  final double progress; //playback progress
+  final Function(double) onSeekRequested;
   //ensures the seek bar takes a seekPercent
   RadialSeekBar({
     this.seekPercentage = 0.0,
-    this.progress = 0.0, 
-    this.seekRequest,
-    
+    this.progress = 0.0,
+    this.onSeekRequested,
   });
   @override
   _RadialSeekBarState createState() => _RadialSeekBarState();
 }
 
-
 class _RadialSeekBarState extends State<RadialSeekBar> {
-  double _progress = 0.0; // this must change based on start position and song duration
-  PolarCoord _startDragCoord; //hold onto start drag coord to calculate net drag change at any poin in time
-  double _startDragPercentage;
+  double _progress =
+      0.0; // this must change based on start position and song duration
+  PolarCoord
+      _startDragCoord; //hold onto start drag coord to calculate net drag change at any poin in time
+  double _startDragPercent;
   double _currentDragPercent; //Used to calculate seek perdentage during play
 
   @override
@@ -147,34 +176,41 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
 
   void _onDragStart(PolarCoord coord) {
     _startDragCoord = coord;
-    _startDragPercentage = _progress;
+    _startDragPercent = _progress;
   }
 
   void _onDragUpdate(PolarCoord coord) {
     final dragAngle = coord.angle - _startDragCoord.angle;
     final dragPercent = dragAngle / (2 * pi);
-    setState(() => 
+    
+    setState(
+      () =>
           //updating dragPercent using start drag coord
-          _currentDragPercent = (_startDragPercentage + dragPercent) % 1.0,
-          //keep it equal and lower than 100percent
-        );
+          _currentDragPercent = (_startDragPercent + dragPercent) % 1.0,
+      //keep it equal and lower than 100percent
+    );
   }
 
   void _onDragEnd() {
-    if (widget.seekRequest != null){ //if user drags(request) then change seekbar position
-      widget.seekRequest(_currentDragPercent);
+    if (widget.onSeekRequested != null) {
+      //if user drags(request) then change seekbar position
+      widget.onSeekRequested(_currentDragPercent);
     }
     setState(() {
-      
       _currentDragPercent = null;
       _startDragCoord = null;
-      _startDragPercentage = 0.0;
+      _startDragPercent = 0.0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    
+     double thumbPosition = _progress;
+    if (_currentDragPercent != null) {
+      thumbPosition = _currentDragPercent;
+    } else if (widget.seekPercentage != null) {
+      thumbPosition = widget.seekPercentage;
+    }
     return new RadialDragGestureDetector(
       //define these functions in state object to listen to changes//
       //functions for radial gesture detector
@@ -192,10 +228,10 @@ class _RadialSeekBarState extends State<RadialSeekBar> {
                 child: RadialProgressBar(
                   //shows song's playback progress/seek bar
                   trackColor: Color(0xFFDDDDDD),
-                  progressPercentage: _currentDragPercent ?? _progress,
+                  progressPercentage:  _progress,
                   //percentage of circle for progress bar; uses current drag percent if its neither null nor zero
                   progressColor: accentColor,
-                  thumbPosition: _currentDragPercent ?? _progress,
+                  thumbPosition: thumbPosition,
                   thumbColor: lightAccentColor,
                   innerPadding: EdgeInsets.all(10.0),
                   child: albumArt, //album artwork clip oval
