@@ -1,5 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:fluttery_audio/fluttery_audio.dart' show AudioComponent, AudioPlayer, AudioPlayerState, AudioPlaylistComponent, Playlist, WatchableAudioProperties;
+import 'package:fluttery_audio/fluttery_audio.dart'
+    show
+        AudioComponent,
+        AudioPlayer,
+        AudioPlayerState,
+        AudioPlaylistComponent,
+        Playlist,
+        WatchableAudioProperties;
 import 'package:music_player/songs.dart';
 import 'package:music_player/theme.dart';
 
@@ -17,86 +26,57 @@ class BottomControls extends StatelessWidget {
               //Column with controls
               child: new Column(
                 children: <Widget>[
-                  new TrackInfo(),
+                  new AudioPlaylistComponent(
+                    playlistBuilder: (BuildContext context, Playlist playlist,
+                        Widget child) {
+                      final songTitle =
+                          demoPlaylist.songs[playlist.activeIndex].songTitle;
+                      final artistName =
+                          demoPlaylist.songs[playlist.activeIndex].artist;
+                      return new RichText(
+                          textAlign: TextAlign.center,
+                          text: new TextSpan(text: '', children: [
+                            //Song Title
+                            new TextSpan(
+                              text: '${songTitle.toUpperCase()}\n',
+                              style: new TextStyle(
+                                color: Colors.white,
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 4.0,
+                                height: 1.5,
+                              ),
+                            ),
+
+                            //Artist Name
+                            new TextSpan(
+                                text: '${artistName.toUpperCase()}\n',
+                                style: new TextStyle(
+                                  color: Colors.white.withOpacity(0.75),
+                                  fontSize: 12.0,
+                                  letterSpacing: 3.0,
+                                  height: 1.5,
+                                ))
+                          ]));
+                    },
+                  ),
                   new Padding(
                     padding: const EdgeInsets.only(top: 40.0),
                     child: new Row(
                       children: <Widget>[
-                        //EXpanded is just taking up space.
-                        new Expanded(
-                          child: new Container(),
-                        ),
-
-                        ////////////////////////////////
-                        ///// Previous Song Button ////////
-                        ////////////////////////////////
+                        new Expanded(child: new Container()),
                         new PreviousButton(),
-
-                        //Space
-                        new Expanded(
-                          child: new Container(), ////////empty container
-                        ),
-
-                        ////////////////////////////////
-                        ///// PLAY SONG BUTTON ////////
-                        ////////////////////////////////
+                        new Expanded(child: new Container()),
                         new PlayPauseButton(),
-                        //Space
-                        new Expanded(
-                          child: new Container(), ////////empty container
-                        ),
-
-                        ////////////////////////
-                        //////NEXT SONG BUTTON////////
-                        ////////////////////////
+                        new Expanded(child: new Container()),
                         new NextButton(),
-                        new Expanded(
-                          child: new Container(),
-                        ),
+                        new Expanded(child: new Container()),
                       ],
                     ),
                   )
                 ],
               )),
         ));
-  }
-}
-
-class TrackInfo extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return AudioPlaylistComponent(
-      playlistBuilder:
-          (BuildContext context, Playlist playlist, Widget child) {
-            final songTitle = demoPlaylist.songs[playlist.activeIndex].songTitle;
-            final artistName = demoPlaylist.songs[playlist.activeIndex].artist;
-        return new RichText(
-          textAlign: TextAlign.center,
-            text: new TextSpan(text: '', children: [
-          //Song Title
-          new TextSpan(
-            text: '${songTitle.toUpperCase()}\n',
-            style: new TextStyle(
-              color: Colors.white,
-              fontSize: 14.0,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 4.0,
-              height: 1.5,
-            ),
-          ),
-
-          //Artist Name
-          new TextSpan(
-              text: '${artistName.toUpperCase()}\n',
-              style: new TextStyle(
-                color: Colors.white.withOpacity(0.75),
-                fontSize: 12.0,
-                letterSpacing: 3.0,
-                height: 1.5,
-              ))
-        ]));
-      },
-    );
   }
 }
 
@@ -168,7 +148,8 @@ class PlayPauseButton extends StatelessWidget {
 class NextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return AudioPlaylistComponent(playlistBuilder:
+    return AudioPlaylistComponent(
+      playlistBuilder:
         (BuildContext context, Playlist playlist, Widget child) {
       return new IconButton(
         splashColor: lightAccentColor,
@@ -181,5 +162,19 @@ class NextButton extends StatelessWidget {
         onPressed: playlist.next,
       );
     });
+  }
+}
+class CircleClipper extends CustomClipper<Rect> {
+  @override
+  Rect getClip(Size size) {
+    return new Rect.fromCircle(
+      center: new Offset(size.width / 2, size.height / 2),
+      radius: min(size.width, size.height) / 2,
+    );
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Rect> oldClipper) {
+    return true;
   }
 }

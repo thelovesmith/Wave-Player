@@ -23,9 +23,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  
 
-  final String title;
+  
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
             new Expanded(
               //these if statements help you conrol the seeking capabilities and look for the track duration is there is one.
 
-              child: AudioPlaylistComponent(
+              child: new AudioPlaylistComponent(
                 playlistBuilder: (BuildContext context, Playlist playlist, Widget child){
                   String albumArtUrl = demoPlaylist.songs[playlist.activeIndex].albumArtUrl;
                   return new AudioRadialSeekBar(
@@ -108,7 +108,9 @@ class _MyHomePageState extends State<MyHomePage> {
 class AudioRadialSeekBar extends StatefulWidget {
   final String albumArtUrl;
 
-  const AudioRadialSeekBar({Key key, this.albumArtUrl}) : super(key: key);
+  AudioRadialSeekBar({
+    this.albumArtUrl,
+  });
 
   @override
   _AudioRadialSeekBarState createState() => _AudioRadialSeekBarState();
@@ -171,7 +173,9 @@ class RadialSeekBar extends StatefulWidget {
     this.child,
   });
   @override
-  _RadialSeekBarState createState() => _RadialSeekBarState();
+  _RadialSeekBarState createState() {
+    return new _RadialSeekBarState();
+  }
 }
 
 class _RadialSeekBarState extends State<RadialSeekBar> {
@@ -440,17 +444,4 @@ class RadialProgressBarPainter extends CustomPainter {
 }
 
 
-class CircleClipper extends CustomClipper<Rect> {
-  @override
-  Rect getClip(Size size) {
-    return new Rect.fromCircle(
-      center: new Offset(size.width / 2, size.height / 2),
-      radius: min(size.width, size.height) / 2,
-    );
-  }
 
-  @override
-  bool shouldReclip(CustomClipper<Rect> oldClipper) {
-    return true;
-  }
-}
