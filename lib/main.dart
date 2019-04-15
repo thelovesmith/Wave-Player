@@ -40,9 +40,13 @@ class _MyHomePageState extends State<MyHomePage> {
   
   @override
   Widget build(BuildContext context) {
-    return new Audio(
+    return new AudioPlaylist(
+      //this Audio widget only plays one song. 
+      //Must use AudioPlaylist to play multiple songs in succession 
       // this audio widget needs to be one of the top widgets so that it is playing everywhere, you dont want it to stop playing when they switch to a different page
-      audioUrl: demoPlaylist.songs[1].audioUrl,
+      playlist: demoPlaylist.songs.map((DemoSong song){
+        return song.audioUrl;
+      }).toList(growable: false),
       playbackState: PlaybackState.paused,
       child: new Scaffold(
         appBar: AppBar(
